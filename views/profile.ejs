@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        <%= user.fullname %>'s Profile
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="/stylesheets/profile.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Pinterest</a>
+            <div class="navbar-nav ms-auto">
+                <a href="/logout" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <!-- Profile Section -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-body text-center">
+                        <img src="<%= user.profileImage || 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZSUyMHBpY3R1cmVzfGVufDB8fDB8fHww' %>"
+                            alt="Profile Picture" class="rounded-circle mb-3" width="150" height="150">
+                        <h2>
+                            <%= user.fullname %>
+                        </h2>
+                        <p class="text-muted">@<%= user.username %>
+                        </p>
+                        <p>
+                            <%= user.bio || 'No bio yet' %>
+                        </p>
+
+                        <!-- Upload Form -->
+                        <div class="mt-4">
+                            <form action="/upload" method="post" enctype="multipart/form-data"
+                                class="border p-3 rounded">
+                                <h5 class="mb-3">Upload New Post</h5>
+                                <div class="mb-3">
+                                    <input type="text" name="filecaption" class="form-control" placeholder="Caption">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="file" name="file" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Upload</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posts Section -->
+            <div class="col-md-8">
+                <h3 class="mb-4">My Posts</h3>
+
+                <% if (user.posts && user.posts.length> 0) { %>
+                    <div class="row">
+                        <% user.posts.forEach(function(post) { %>
+                            <% if (post.image) { %> <!-- Only show if image exists -->
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <!-- Fix image path -->
+                                        <img src="/uploads/<%= post.image %>" class="card-img-top"
+                                            alt="<%= post.imageText || 'Post image' %>"
+                                            style="height: 200px; object-fit: cover;"
+                                            onerror="this.onerror=null;this.src='/images/default-post.jpg';">
+                                        <div class="card-body">
+                                            <p class="card-text">
+                                                <%= post.imageText || 'No caption provided' %>
+                                            </p>
+                                            <small class="text-muted">
+                                                Posted on: <%= post.createdAt.toLocaleDateString('en-US', {
+                                                    year: 'numeric' , month: 'long' , day: 'numeric' }) %>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <% }); %>
+                    </div>
+                    <% } else { %>
+                        <div class="alert alert-info">
+                            You haven't posted anything yet. Upload your first post using the form!
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
